@@ -1,0 +1,89 @@
+benchmark for available bike stocks prediction (target = ds["vm_disp"] + ds["vae_disp])
+database: full_db.nc (300Mb)
+1500 stations, 2023-2024
+LOSS: RMSE (in bikes)
+
+I. Chronos Forecasting: time serie pretrained model
+target history (2month past values) -> target next week
+here without covariates but Chronos shares info bewteen targets (samples of 32 stations)
+
+=======================
+train size: 2month context
+=======================
+chronos:
+horizon: 0<=t<24
+rmse: 4.73
+horizon: 24<=t<48
+rmse: 5.60
+horizon: 168<=t<192
+rmse: 6.19
+=======================
+
+II. Regression y=f(X) with covariates:
+66 covariates:
+{'lag': 'Hourly lags from 24h to 216h shifted by horizon + weekly lags up to 9 weeks', 'meteo': array(['DRR1', 'FXI', 'GLO', 'HUN', 'INS', 'PSTAT', 'TX', 'U'],
+      dtype='<U5'), 'holiday': array(['vacances', 'is_ferie'], dtype='<U8'), 'space': 'Station capacity + 10 spatial Tucker components + latitude / longitude', 'time_of_week': '7 day-of-week components + 10 hour-of-day components', 'week': 'Absolute week index since 2023 + 3 seasonal Fourier harmonics', 'last_update': 'Last known station value at 23:00 before prediction horizon'}
+
+Test set: holdout weeks (unseen during train)
+
+=======================
+train size: 40000
+=======================
+horizon: 0<=t<24
+lin: 5.245
+xgb: 5.229
+neural: 5.069
+poly: 5.023
+=======================
+horizon: 24<=t<48
+lin: 5.802
+xgb: 6.076
+neural: 5.786
+poly: 5.864
+=======================
+horizon: 168<=t<192
+lin: 6.087
+xgb: 6.451
+neural: 6.118
+poly: 6.229
+
+=======================
+train size: 200_000
+=======================
+horizon: 0<=t<24
+lin: 5.239
+xgb: 4.993
+poly: 4.843
+neural: 4.854
+=======================
+horizon: 24<=t<48
+lin: 5.794
+xgb: 5.852
+poly: 5.640
+neural: 5.655
+=======================
+horizon: 168<=t<192
+lin: 6.111
+xgb: 6.237
+poly: 6.011
+neural: 6.015
+=======================
+train size: 1_000_000
+=======================
+horizon: 0<=t<24
+lin: 5.202
+xgb: 4.769
+poly: 4.757
+neural: 4.682
+=======================
+horizon: 24<=t<48
+lin: 5.845
+xgb: 5.736
+poly: 5.638
+neural: 5.617
+=======================
+horizon: 168<=t<192
+lin: 6.115
+xgb: 6.011
+poly: 5.917
+neural: 5.953

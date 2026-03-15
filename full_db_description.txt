@@ -1,0 +1,105 @@
+=================================
+GLOSSARY
+=================================
+
+station
+    Unique station identifier.
+
+binary_index
+    Hierarchical spatial index for stations (KD-tree encoding).
+    Used to perform fast spatial selections, clustering, or to train
+    models on small spatial groups of stations (typically blocks of
+    about 64 nearby stations).
+
+spatial_feature
+    Static geographical or infrastructure features associated with each station.
+
+ferie
+    French term for public holidays.
+
+component
+    Latent components obtained from Singular Value Decomposition:
+    Stock ≈ U @ S @ V^T
+
+flux_plus
+    Bike arrival flow (number of bikes returned to the station per hour).
+
+flux_minus
+    Bike departure flow (number of bikes taken from the station per hour).
+
+vae
+    Electric bikes ("Vélo à Assistance Électrique").
+
+vm
+    Mechanical bikes ("Vélo Mécanique").
+
+vae_transporte, vm_transporte
+    Rebalancing operations performed by the Velib operator
+    (Smovengo). These represent bikes transported by trucks
+    between stations.
+
+operative
+    Boolean flag indicating whether the station is operational.
+
+meteo_dim
+    Hourly meteorological variables provided by the weather service.
+
+=================================
+MAIN VARIABLES
+=================================
+
+demand /!\ Experimental, should be taken as a rough estimation
+    Estimated latent demand (free of rebalancing operation and free of censorship due to saturation).
+
+reg
+    Regulation flag (rebalancing operation in progress)
+
+cap
+    Effective station capacity (migth variate over time and thus be different of "capacite")
+vm_disp
+    Available mechanical bikes.
+
+vae_disp
+    Available electric bikes.
+
+indisp
+    Number of unavailable bikes (maintenance, battery, etc.).
+
+docks
+    Number of available docking points.
+==================================
+==================================
+<xarray.Dataset> Size: 330MB
+Dimensions:          (station: 1551, binary_index: 11, spatial_feature: 4,
+                      time: 17544, ferie_feature: 2, component: 10, meteo_dim: 8)
+Coordinates:
+  * station          (station) <U12 74kB '000000002' '10001' ... '9999980'
+    capacite         (station) int32 6kB ...
+    latitude         (station) float64 12kB ...
+    longitude        (station) float64 12kB ...
+  * binary_index     (binary_index) int32 44B 0 1 2 3 4 5 6 7 8 9 10
+  * spatial_feature  (spatial_feature) <U12 192B 'Capacité de ' ... 'altitude'
+  * time             (time) datetime64[ns] 140kB 2023-01-01 ... 2024-12-31T23...
+  * ferie_feature    (ferie_feature) <U8 64B 'vacances' 'is_ferie'
+  * component        (component) int64 80B 0 1 2 3 4 5 6 7 8 9
+  * meteo_dim        (meteo_dim) <U5 160B ['DRR1', 'FXI', 'GLO', 'HUN', 'INS', 'PSTAT', 'TX', 'U']
+Data variables:
+    code_binaire    (station, binary_index) int32 68kB ...
+    features        (station, spatial_feature) float64 50kB ...
+    feries          (time, ferie_feature) bool 35kB ...
+    flux_minus      (station, time) int8 27MB ...
+    flux_plus       (station, time) int8 27MB ...
+    vae_transporte  (station, time) int8 27MB ...
+    vm_transporte   (station, time) int8 27MB ...
+    U               (station, component) float64 124kB ...
+    S               (component) float64 80B ...
+    VT              (time, component) float64 1MB ...
+    meteo_h         (time, meteo_dim) float64 1MB ...
+    demand          (station, time) int8 27MB ...
+    reg             (station, time) int8 27MB ...
+    cap             (station, time) uint8 27MB ...
+    vm_disp         (station, time) uint8 27MB ...
+    vae_disp        (station, time) uint8 27MB ...
+    indisp          (station, time) uint8 27MB ...
+    docks           (station, time) uint8 27MB ...
+    operative       (station, time) bool 27MB ...
