@@ -3,6 +3,7 @@ import pandas as pd
 from scipy.ndimage import gaussian_filter1d
 import glob
 import os
+import pyarrow.dataset as ds
 
 def compute_events(df):
     df = df.copy()
@@ -93,7 +94,7 @@ def read_metadata():
     # Step 2: Use first station to get feature columns
     first_station_file = os.path.join(data_path, station_dirs[0], "time_serie.parquet")
     if os.path.exists(first_station_file):
-        df_first = pd.read_parquet(first_station_file, engine='pyarrow')
+        df_first = ds.dataset(first_station_file).to_table().to_pandas()
         feature_cols = df_first.columns.tolist()
         print(f"Found {len(feature_cols)} columns")
     else:
@@ -120,7 +121,7 @@ def read_metadata():
 
 def timeserie(st, meta):
     parquet_file = f"instant_updates/{st}/time_serie.parquet"
-    df = pd.read_parquet(parquet_file, engine="pyarrow")
+    df = ds.dataset(parquet_file).to_table().to_pandas()
 
     df.index = pd.to_datetime(df.index)
 
