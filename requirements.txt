@@ -4,3 +4,4 @@ xarray
 scikit-learn
 xgboost
 netcdf4
+tensorly
